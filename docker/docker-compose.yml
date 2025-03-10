@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16.0
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file: .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports: # links container and host ports
+      - "5432:5432"
+    restart: unless-stopped # rerun if container crashes
+    healthcheck: # check every 5 sec if DB is ready
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+
+  app:
+    build:
+      context: .. # root directory of the project
+      dockerfile: docker/Dockerfile # Dockerfile relates to context
+
+    # volumes: pushes /app code into container, if the code updates it updates in the container also
+    volumes:
+      - ../:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:  # app runs in case if db is running
+        condition: service_healthy
+    env_file: .env
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_SERVER=db # containers in Docker network can reach each other by service name ('db')
+      - DB_PORT=${DB_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG:-False}
+    networks:
+      - app-network # connect app to the same network as DB
+    restart: unless-stopped
+
+# bridge network driver is used by default for creating an isolated network on Docker host
+networks:
+  app-network:
+
+volumes:
+    postgres_data:
