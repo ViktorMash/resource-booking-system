@@ -65,6 +65,7 @@ cd docker
 docker compose up -d app
 ```
 
+
 6.**Verify application**
 
 After successful startup, the API will be available at:
