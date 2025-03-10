@@ -15,6 +15,7 @@ A web application for booking various resources (computational resources, meetin
 - Git
 - Docker
 - Docker Compose
+- MacOS
 
 ### Installation Steps
 
