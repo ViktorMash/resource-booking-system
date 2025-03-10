@@ -40,7 +40,6 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_SERVER=db # containers in Docker network can reach each other by service name ('db')
       - DB_PORT=${DB_PORT}
-      - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DEBUG:-False}
     networks:
       - app-network # connect app to the same network as DB
