@@ -28,4 +28,4 @@ class PermissionSchema(PermissionBase):
 class TokenSchema(BaseModel):
     access_token: str
     token_type: str
-    expires_at: Optional[datetime]
+    expires_at: Optional[str]

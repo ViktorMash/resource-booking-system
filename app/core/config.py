@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     DESCRIPTION: str = "A web application for booking various resources (computational resources, meeting rooms, equipment, etc.) with user permissions management"
     API_PREFIX: str = "/api/v1"
     DEBUG: bool = os.getenv("DEBUG", False)
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "")
+    #SECRET_KEY: str = os.getenv("SECRET_KEY", "")
 
 
     # DB settings

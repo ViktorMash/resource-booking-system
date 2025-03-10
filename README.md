@@ -35,7 +35,6 @@ Make sure the following parameters are configured correctly:
 - `DB_NAME`
 - `DB_PORT`
 - `DB_SERVER`
-- `SECRET_KEY` (for JWT tokens)
 
 #### 3. Start the database
 
