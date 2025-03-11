@@ -38,6 +38,7 @@ Make sure the following parameters are configured correctly:
 - `DB_SERVER`
 
 #### 3. Start the database
+On macOS: Open Docker Desktop from Applications
 
 ```bash
 cd docker

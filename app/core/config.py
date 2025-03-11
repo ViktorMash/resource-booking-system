@@ -2,12 +2,24 @@ import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 from pathlib import Path
+import secrets
 
 # Go 3 levels up from app/core/config.py and set path to .env in the docker folder
 dotenv_path = Path(__file__).resolve().parent.parent.parent  / "docker" / ".env"
 
 # load env variables from .env file
 load_dotenv(dotenv_path)
+
+
+def generate_secret_key() -> str:
+    """ set SECRET_KEY for current session if not set in .env file """
+    secret_key = os.getenv("SECRET_KEY")
+
+    if not secret_key:
+        os.environ["SECRET_KEY"] = secrets.token_hex(32)
+
+    return secret_key
+
 
 # load env variables into settings
 class Settings(BaseSettings):
@@ -17,8 +29,7 @@ class Settings(BaseSettings):
     DESCRIPTION: str = "A web application for booking various resources (computational resources, meeting rooms, equipment, etc.) with user permissions management"
     API_PREFIX: str = "/api/v1"
     DEBUG: bool = os.getenv("DEBUG", False)
-    #SECRET_KEY: str = os.getenv("SECRET_KEY", "")
-
+    SECRET_KEY: str = generate_secret_key()  # secret key for JWT tokens
 
     # DB settings
     DB_USER: str = os.getenv("DB_USER", "")
@@ -37,7 +48,7 @@ class Settings(BaseSettings):
     SQLALCHEMY_POOL_MAX_OVERFLOW: int = 5  # additional DB connections
 
     # JWT tokens
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 1  # 1 day
     ACCESS_TOKEN_ALGORITHM: str = "HS256"
 
     model_config = SettingsConfigDict(
