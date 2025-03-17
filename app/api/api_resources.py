@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.db.models import UserModel, ResourceModel, BookingModel
 from app.schemas import ResourceCreate, ResourceSchema, ResourceAvailabilityResponse, ResourceAvailabilityRequest
-from app.core.auth import get_current_active_user, check_permission
+from app.core.users import get_current_active_user, check_permissions
 
 
 router = APIRouter(prefix="/resources", tags=["resources"])
@@ -80,7 +80,7 @@ def check_resource_availability(
         raise HTTPException(status_code=404, detail=f"Resource not found or request doesn't contain either id or name")
 
     # Check permission to view resource
-    if not check_permission(db, current_user, request.resource_id, action="view"):
+    if not check_permissions(db, current_user, request.resource_id, action="view"):
         raise HTTPException(
             status_code=403,
             detail=f"Not enough permissions to view resource '{resource.name}'"

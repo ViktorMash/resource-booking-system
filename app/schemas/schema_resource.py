@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
-from .booking import BookingInfo
+from .schema_booking import BookingInfo
 
 from pydantic import BaseModel, Field, model_validator
 

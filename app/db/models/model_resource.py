@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, JSON, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
-from app.db.models.base import BaseModel
+from app.db.models.model_base import BaseModel
 
 
 class ResourceModel(BaseModel):

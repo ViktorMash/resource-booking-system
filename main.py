@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
 from app.api import router
+from app.core.responses import CustomException, exception_handler
 from app.core import settings
 
 
@@ -10,6 +11,8 @@ app = FastAPI(
     version=settings.VERSION,
     description=settings.DESCRIPTION,
 )
+app.add_exception_handler(CustomException, exception_handler)
+
 
 @app.get("/", include_in_schema=False)
 def root():

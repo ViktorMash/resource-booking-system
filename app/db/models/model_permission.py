@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.db.models.base import BaseModel
+from app.db.models.model_base import BaseModel
 
 
 class PermissionModel(BaseModel):

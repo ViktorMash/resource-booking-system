@@ -1,4 +1,4 @@
-from .user import UserModel
-from .group import GroupModel
-from .resource import ResourceModel, BookingModel
-from .permission import PermissionModel
+from .model_user import UserModel
+from .model_group import GroupModel
+from .model_resource import ResourceModel, BookingModel
+from .model_permission import PermissionModel

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.db.models import UserModel, ResourceModel, BookingModel
 from app.schemas import BookingCreate, BookingSchema
-from app.core.auth import get_current_active_user, check_permission, check_resource_availability
+from app.core.users import get_current_active_user, check_resource_availability, check_permissions
 
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -24,7 +24,7 @@ def create_booking(
         raise HTTPException(status_code=404, detail=f"Resource with ID: {booking.resource_id} not found")
 
     # check if a user has a permission to book a resource
-    if not check_permission(db, current_user, booking.resource_id, action="book"):
+    if not check_permissions(db, current_user, booking.resource_id, action="book"):
         raise HTTPException(status_code=403, detail=f"Not enough permissions for user '{current_user.email}' to book resource '{resource.name}'")
 
     # check if a resource is available in requesting time
@@ -113,7 +113,7 @@ def update_booking(
 
     # check if user has permission to book a resource
     if db_booking.resource_id != booking_update.resource_id:
-        if not check_permission(db, current_user, booking_update.resource_id, action="book"):
+        if not check_permissions(db, current_user, booking_update.resource_id, action="book"):
             raise HTTPException(
                 status_code=403,
                 detail=f"Not enough permissions for user '{current_user.email}'"

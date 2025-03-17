@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.db.models import UserModel, GroupModel, ResourceModel, PermissionModel
 from app.schemas import PermissionCreate, PermissionSchema
-from app.core.auth import get_current_active_user
+from app.core.users import get_current_active_user
 
 
 router = APIRouter(prefix="/permissions", tags=["permissions"])

@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.db.models.base import BaseModel
-from app.db.models.user import user_group
+from app.db.models.model_base import BaseModel
+from app.db.models.model_user import user_group
 
 
 class GroupModel(BaseModel):

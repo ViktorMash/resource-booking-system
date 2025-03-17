@@ -1,2 +1,2 @@
 from .session import get_db
-from .models.base import BaseModel
+from .models.model_base import BaseModel

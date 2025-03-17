@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -26,6 +25,6 @@ class PermissionSchema(PermissionBase):
 
 # token
 class TokenSchema(BaseModel):
-    access_token: str
     token_type: str
+    access_token: str
     expires_at: Optional[str]
