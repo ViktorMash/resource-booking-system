@@ -1,15 +1,15 @@
 from datetime import datetime
 from typing import Optional, List
-from .schema_booking import BookingInfo
+from .booking import BookingConflict
 
 from pydantic import BaseModel, Field, model_validator
 
 
 
 class ResourceBase(BaseModel):
-    name: str
-    description: Optional[str]
-    capacity: int = 1
+    name: str= Field(..., min_length=3, max_length=30, description="Resource name")
+    description: Optional[str] = Field(None, max_length=100, description="Resource description")
+    capacity: int = Field(default=1, gt=0, description="Resource capacity")
 
 
 class ResourceCreate(ResourceBase):
@@ -17,8 +17,8 @@ class ResourceCreate(ResourceBase):
 
 
 class ResourceAvailabilityRequest(BaseModel):
-    resource_id: Optional[int]
-    resource_name: Optional[str]
+    resource_id: Optional[int] = None
+    resource_name: Optional[str] = None
     start_time: datetime
     end_time: datetime
 
@@ -31,11 +31,12 @@ class ResourceAvailabilityRequest(BaseModel):
 
 class ResourceAvailabilityResponse(BaseModel):
     is_available: bool
+    message: Optional[str]
+    resource_id: int
     resource_name: str
     capacity: int
     available_capacity: int
-    conflicting_bookings: List[BookingInfo] = Field(default_factory=list)
-    message: Optional[str]
+    conflicting_bookings: List[BookingConflict] = Field(default_factory=list)
 
 
 class ResourceSchema(ResourceBase):

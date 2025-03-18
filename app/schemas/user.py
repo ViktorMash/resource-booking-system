@@ -67,9 +67,8 @@ class UserUpdate(UserBase):
     def password_must_be_strong(cls, v):
         return cls.validate_password(v)
 
-
 class UserSchema(UserBase):
-    id: int = Field(..., description="User unique ID")
+    id: int = Field(..., gt=0, description="User unique ID")
     created_at: datetime = Field(..., description="User creation date and time")
 
     class Config:

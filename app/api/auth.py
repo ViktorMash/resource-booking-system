@@ -28,12 +28,8 @@ def login_for_access_token(
             message="Authorization error",
             details="Incorrect username or password",
         )
-    token_data = create_access_token(data={"sub": user.email})
-
-    return ApiResponse.success(
-        data=token_data,
-        message="Successful login",
-    )
+    # do not use ApiResponse wrapper here
+    return create_access_token(data={"sub": user.email})
 
 
 @router.post("/initial-setup", response_model=UserSchema, summary="Create admin user while setting up the system")

@@ -2,8 +2,12 @@ import random
 from datetime import datetime, timedelta
 
 from app.db import get_db
-from app.db.models import UserModel, GroupModel, ResourceModel, PermissionModel, BookingModel
+from app.schemas import BookingStatus, PermissionAction
 from app.core.auth import get_password_hash
+from app.db.models import (
+    UserModel, GroupModel, ResourceModel, PermissionModel,
+    BookingModel
+)
 
 
 def populate_db():
@@ -12,9 +16,9 @@ def populate_db():
 
     # 1. Create superuser
     admin_user = UserModel(
-        email="admin@company.com",
-        username="admin",
-        hashed_password=get_password_hash(password="adminpassword"),
+        email="admin1@company.com",
+        username="admin1",
+        hashed_password=get_password_hash(password="password#1"),
         is_active=True,
         is_superuser=True
     )
@@ -29,7 +33,7 @@ def populate_db():
         user = UserModel(
             email=f"user{i}@company.com",
             username=f"user{i}",
-            hashed_password=get_password_hash(password="password"),
+            hashed_password=get_password_hash(password="password#1"),
             is_active=True,
             is_superuser=False
         )
@@ -84,7 +88,7 @@ def populate_db():
         for resource in selected_resources:
             # Allow view permission for all groups
             view_permission = PermissionModel(
-                action="view",
+                action=PermissionAction.VIEW,
                 group_id=group.id,
                 resource_id=resource.id
             )
@@ -93,7 +97,7 @@ def populate_db():
             # Some groups get booking permissions
             if random.random() > 0.3:  # 70% chance
                 book_permission = PermissionModel(
-                    action="book",
+                    action=PermissionAction.BOOK,
                     group_id=group.id,
                     resource_id=resource.id
                 )
@@ -105,7 +109,7 @@ def populate_db():
         for resource in selected_resources:
             if random.random() > 0.5:
                 permission = PermissionModel(
-                    action="view",
+                    action=PermissionAction.VIEW,
                     user_id=user.id,
                     resource_id=resource.id
                 )
@@ -113,7 +117,7 @@ def populate_db():
 
             if random.random() > 0.7:
                 permission = PermissionModel(
-                    action="book",
+                    action=PermissionAction.BOOK,
                     user_id=user.id,
                     resource_id=resource.id
                 )
@@ -135,7 +139,7 @@ def populate_db():
             resource_id=resource.id,
             start_time=start_time,
             end_time=end_time,
-            status=random.choice(["pending", "approved", "cancelled"])
+            booking_status=random.choice(list(BookingStatus.__members__.values()))
         )
         db.add(booking)
 

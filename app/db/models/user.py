@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Boolean, Table, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
-from app.db.models.model_base import BaseModel
+from app.db.models.base import BaseModel
 from app.core import settings
 
 # Relational table between users and groups (many-to-many), this table doesn't have its own model
@@ -16,9 +16,9 @@ user_group = Table(
 class UserModel(BaseModel):
     __tablename__ = "users"
 
-    email = Column(String, unique=True, nullable=False)
-    username = Column(String, unique=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    email = Column(String(50), unique=True, nullable=False)
+    username = Column(String(30), unique=True, nullable=False)
+    hashed_password = Column(String(128), nullable=False)
     is_active = Column(Boolean, default=settings.DEFAULT_USER_ACTIVE)
     is_superuser = Column(Boolean, default=settings.DEFAULT_USER_SUPERUSER)
 

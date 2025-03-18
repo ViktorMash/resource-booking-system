@@ -3,7 +3,6 @@ WHERE schemaname = 'public';
 
 SELECT * FROM alembic_version;
 
-
 SELECT string_agg(
     format('SELECT %L AS table_name, COUNT(*) AS row_count FROM %I',
            tablename,
@@ -19,6 +18,10 @@ SELECT 'resources' AS table_name, COUNT(*) AS row_count FROM resources UNION ALL
 
 
 select * from rbs.public.users;
+select * from rbs.public.groups;
+select * from rbs.public.resources;
+select * from rbs.public.permissions;
 select * from rbs.public.bookings;
+
 
 

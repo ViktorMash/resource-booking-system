@@ -1,6 +1,7 @@
 from typing import Optional, Any, Dict
-from fastapi.responses import JSONResponse
 from fastapi import status, HTTPException, Request
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from datetime import datetime, date
 
 from app.schemas import ResponseSchema, ResponseMetaSchema
@@ -24,6 +25,10 @@ class ApiResponse:
         if data is None:
             return None
 
+        # handle datetime objects
+        if isinstance(data, (datetime, date)):
+            return data.strftime(settings.DATETIME_TEMPLATE)
+
         # handle ORM objects
         if hasattr(data, '__table__'):
 
@@ -38,6 +43,7 @@ class ApiResponse:
                 else:
                     result[column.name] = value
             return result
+
 
         # handle dicts
         if isinstance(data, dict):
@@ -77,8 +83,11 @@ class ApiResponse:
             meta=meta
         )
 
+        # Use jsonable_encoder in order to serialize all data types
+        json_compatible_content = jsonable_encoder(response_obj.model_dump())
+
         return JSONResponse(
-            content=response_obj.model_dump(),
+            content=json_compatible_content,
             headers=headers
         )
 

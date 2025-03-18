@@ -8,8 +8,9 @@ from sqlalchemy.orm import Session
 from app.core import settings
 from app.db import get_db
 from app.db.models import UserModel, ResourceModel, PermissionModel, BookingModel
-from app.schemas import UserCreate, SuperUserCreate
+from app.schemas import UserCreate, SuperUserCreate, BookingStatus
 from .auth import get_password_hash, verify_password, oauth2_scheme
+from app.core.responses import CustomException
 
 
 def create_user(user: UserCreate | SuperUserCreate) -> UserModel:
@@ -43,14 +44,15 @@ def authenticate_user(db: Session, *, email: str, password: str) -> Optional[Use
 def get_current_user(db: Session = Depends(get_db), *, token: str = Depends(oauth2_scheme)) -> UserModel:
     """ get current authenticated user from token """
 
-    credentials_exception = HTTPException(
+    credentials_exception = CustomException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        message="Token is not valid",
+        details="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer "},
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ACCESS_TOKEN_ALGORITHM])
-        email: str = payload.get("sub")  # token is created with the field "sub" that contains email
+        email: str = payload.get("sub")  # token is created with the field "sub" (subject) that contains email
         if email is None:
             raise credentials_exception
     except JWTError:
@@ -68,6 +70,22 @@ def get_current_active_user(current_user: UserModel = Depends(get_current_user))
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+
+def get_current_superuser(current_user: UserModel = Depends(get_current_user)) -> None:
+    """
+    Dependency to check if current user is a superuser.
+    Raises an exception if user doesn't have superuser privileges.
+    """
+    if not current_user.is_superuser:
+        raise CustomException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            message="Not enough permissions",
+            details=f"Not enough permissions for user '{current_user.email}'"
+        )
+    return current_user
+
 
 
 
@@ -121,7 +139,7 @@ def check_resource_availability(
     # get all bookings for this time period
     query = db.query(BookingModel).filter(
         BookingModel.resource_id == resource.id,
-        BookingModel.status.in_(["pending", "approved"]),
+        BookingModel.booking_status.in_([BookingStatus.PENDING, BookingStatus.APPROVED]),
         BookingModel.start_time < end_time,
         BookingModel.end_time > start_time,
     )
